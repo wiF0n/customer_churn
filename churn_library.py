@@ -89,6 +89,8 @@ def perform_eda(pd_df):
         sns.histplot(pd_df,
                      x=cat_col,
                      hue=constants.RAW_TARGET_COL,
+                     stat="density",
+                     common_norm=False,
                      multiple="dodge",
                      shrink=.8)
         plt.savefig(os.path.join(constants.EDA_IMG_FLDR_PTH,
@@ -98,17 +100,18 @@ def perform_eda(pd_df):
 
     # Create histograms (density plots) for numeric columns
     for num_col in constants.quant_cols_lst:
-        # Histograms
+        # Univariate
         sns.histplot(pd_df[num_col], stat='density', kde=True)
         plt.savefig(os.path.join(constants.EDA_IMG_FLDR_PTH,
                                  f"{num_col}_hist.png"),
                     bbox_inches="tight")
         plt.close()
 
-        # Scatter plots
+        # Bivariate
         sns.histplot(pd_df,
                      x=num_col,
                      hue=constants.RAW_TARGET_COL,
+                     common_norm=False,
                      stat='density',
                      kde=True)
         plt.savefig(os.path.join(constants.EDA_IMG_FLDR_PTH,
