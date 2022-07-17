@@ -1,0 +1,28 @@
+root - INFO - Importing raw data (as a fixture): SUCCESS
+root - INFO - Testing import_data: SUCCESS
+root - INFO - Importing raw data (as a fixture): SUCCESS
+root - INFO - Testing perform_eda: Folder for images exists
+root - INFO - Testing perform_eda: SUCCESS
+root - INFO - Importing raw data (as a fixture): SUCCESS
+root - INFO - Encoding raw data (as a fixture): SUCCESS
+root - INFO - Importing raw data (as a fixture): SUCCESS
+root - INFO - Encoding raw data (as a fixture): SUCCESS
+root - INFO - Creating modeling data: SUCCESS
+root - INFO - Testing perform_feat_eng # rows: SUCCESS
+root - INFO - Testing perform_feat_eng # cols: SUCCESS
+root - INFO - Importing raw data (as a fixture): SUCCESS
+root - INFO - Encoding raw data (as a fixture): SUCCESS
+root - INFO - Creating modeling data: SUCCESS
+root - INFO - Testing train_models: SUCCESS
+root - INFO - Importing raw data (as a fixture): SUCCESS
+root - INFO - Encoding raw data (as a fixture): SUCCESS
+root - INFO - Creating modeling data: SUCCESS
+root - INFO - Testing cls_rprt: SUCCESS
+root - INFO - Importing raw data (as a fixture): SUCCESS
+root - INFO - Encoding raw data (as a fixture): SUCCESS
+root - INFO - Creating modeling data: SUCCESS
+root - INFO - Testing roc_plot: SUCCESS
+root - INFO - Importing raw data (as a fixture): SUCCESS
+root - INFO - Encoding raw data (as a fixture): SUCCESS
+root - INFO - Creating modeling data: SUCCESS
+root - INFO - Testing roc_plot: SUCCESS

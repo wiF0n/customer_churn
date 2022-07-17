@@ -58,6 +58,7 @@ rf_param_grid_dict = {
 RF_NUM_CV_FOLDS = 5
 
 RSLT_IMG_FLDR_PTH = "./images/results/"
+MODEL_FLDR_PTH = "./models/"
 RF_MODEL_PTH = './models/rfc_model.pkl'
 LR_MODEL_PTH = './models/logistic_model.pkl'
 ROC_IMG_PTH = "./images/results/test_au_roc.jpg"
@@ -65,3 +66,7 @@ FI_IMG_PTH = "./images/results/feat_imp.jpg"
 
 CLS_RPRT_FNT = "monospace"
 CLS_RPRT_FNT_SIZE = 10
+
+# Logging and testing constants
+
+LOG_PTH = './logs/churn_library.log'

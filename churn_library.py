@@ -1,5 +1,5 @@
 """
-This module contains functionality needed to predict customer churn
+This module contains functionality needed to train customer churn model and asses its performance
 
 Author: David Kubanda
 Date: 2022-07-16
@@ -128,8 +128,8 @@ def perform_eda(pd_df):
 
 def encoder_helper(pd_df, category_lst, response):
     '''
-    helper function to turn each categorical column into a new column with
-    propotion of churn for each category - associated with cell 15 from the notebook
+    helper function to turn each categorical column into a new column
+    with propotion of churn for each category and create target variable
 
     input:
             pd_df: pandas dataframe
@@ -138,15 +138,19 @@ def encoder_helper(pd_df, category_lst, response):
                 [optional argument that could be used for naming variables or index y column]
 
     output:
-            pd_df: pandas dataframe with new columns for
+            pd_df: pandas dataframe with new columns (encoded and target/response)
     '''
+    # Create target (response)
+    pd_df[response] = pd_df[constants.RAW_TARGET_COL].apply(
+        lambda val: 0 if val == "Existing Customer" else 1)
+
     # Loop through the categorical columns
     for cat_col in category_lst:
         cat_col_lst = []
         # Compute proportion of churn for each level of the variable
         cat_col_grps = pd_df.groupby(cat_col).mean()[response]
 
-        # Crete list of the proportion of churn based on the level
+        # Create list of the proportion of churn based on the level
         for val in pd_df[cat_col]:
             cat_col_lst.append(cat_col_grps.loc[val])
 
@@ -156,8 +160,10 @@ def encoder_helper(pd_df, category_lst, response):
     return pd_df
 
 
-def perform_feature_engineering(pd_df, response):
+def perform_feat_eng(pd_df, response):
     '''
+    Encode categorical variables and perform train/test split
+
     input:
               pd_df: pandas dataframe
               response: string of response name
@@ -169,9 +175,6 @@ def perform_feature_engineering(pd_df, response):
               y_train: y training data
               y_test: y testing data
     '''
-    # Create target (response)
-    pd_df[response] = pd_df[constants.RAW_TARGET_COL].apply(
-        lambda val: 0 if val == "Existing Customer" else 1)
 
     # Encode categorical variables
     pd_df = encoder_helper(pd_df, constants.cat_cols_lst, response)
@@ -191,9 +194,7 @@ def perform_feature_engineering(pd_df, response):
     return x_train, x_test, y_train, y_test
 
 
-def classification_report_image(y_train, y_test, y_train_preds_lr,
-                                y_train_preds_rf, y_test_preds_lr,
-                                y_test_preds_rf):
+def cls_rprt(y_data, y_pred_data):
     '''
     produces classification report for training and testing results and stores report as image
     in images folder
@@ -208,6 +209,10 @@ def classification_report_image(y_train, y_test, y_train_preds_lr,
     output:
              None
     '''
+    # Get data
+    y_train, y_test = y_data
+    y_train_preds_lr, y_test_preds_lr, y_train_preds_rf, y_test_preds_rf = y_pred_data
+
     # Loop through model architectures
     for model_arch in constants.model_arch_lst:
         if model_arch == "rf":
@@ -269,7 +274,7 @@ def roc_plot(rfc_model, lr_model, x_test, y_test):
     plt.close()
 
 
-def feature_importance_plot(model, x_data, output_pth):
+def feat_imp_plot(model, x_data, output_pth):
     '''
     creates and stores the feature importances in pth
     input:
@@ -321,8 +326,8 @@ def train_models(x_train, x_test, y_train, y_test):
 
     # Load the models
 
-    rfc_model = joblib.load('./models/rfc_model.pkl')
-    lr_model = joblib.load('./models/logistic_model.pkl')
+    rfc_model = joblib.load(constants.RF_MODEL_PTH)
+    lr_model = joblib.load(constants.LR_MODEL_PTH)
 
     # Make prediction (on both test and train df)
     y_train_preds_rf = rfc_model.predict(x_train)
@@ -331,16 +336,17 @@ def train_models(x_train, x_test, y_train, y_test):
     y_train_preds_lr = lr_model.predict(x_train)
     y_test_preds_lr = lr_model.predict(x_test)
 
+    y_data = y_train, y_test
+    y_pred_data = y_train_preds_lr, y_test_preds_lr, y_train_preds_rf, y_test_preds_rf
+
     # Create modeling results report
-    classification_report_image(y_train, y_test, y_train_preds_lr,
-                                y_train_preds_rf, y_test_preds_lr,
-                                y_test_preds_rf)
+    cls_rprt(y_data, y_pred_data)
 
     # Create ROC plots
     roc_plot(rfc_model, lr_model, x_test, y_test)
 
     # Create feature importance plots
-    feature_importance_plot(rfc_model, x_test, constants.FI_IMG_PTH)
+    feat_imp_plot(rfc_model, x_test, constants.FI_IMG_PTH)
 
 
 def main():
@@ -355,7 +361,7 @@ def main():
     perform_eda(churn_df)
 
     # Perform feature eng
-    x_train, x_test, y_train, y_test = perform_feature_engineering(
+    x_train, x_test, y_train, y_test = perform_feat_eng(
         churn_df, constants.TARGET_COL)
 
     # Train, save and test models
